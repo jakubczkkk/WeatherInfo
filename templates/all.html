@@ -1,0 +1,21 @@
+<table>
+  <thead>
+    <tr>
+      <td>Miejsce</td>
+      <td>Data</td>
+      <td>Temperatura</td>
+      <td>Inne</td>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in data: %}
+      <tr>
+        <td>{{ row["place"] }}</td>
+        <td>{{ row["day"] }}</td>
+        <td>{{ row["temperature"] }}</td>
+        <td>{{ row["other"] }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="../">Powrót</a>

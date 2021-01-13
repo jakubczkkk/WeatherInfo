@@ -1,7 +1,9 @@
-<!doctype html>
-<title>Pogoda</title>
+{% extends 'base.html' %}
 
-<form action="/pogoda" method="post">
+{% block content %}
+
+
+<form action="./pogoda" method="post">
 
   <label for="place">Miejsce: </label>
   <input type="text" name="place" id="place">
@@ -16,6 +18,17 @@
 
 </form>
 
-{% block content %}
-  <a href="/pogoda">Wyswietl wszystkie</a>
+<a href="./pogoda">Wszystkie</a>
+
+{% if 'username' in session %}
+
+<a href="./logout">Wyloguj sie</a>
+
+{% else %}
+
+<a href="./login">Zaloguj sie</a>
+
+{% endif %}
+
 {% endblock %}
+

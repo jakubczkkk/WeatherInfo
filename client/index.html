@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>Dziennik Pogody</title>
+    <script src="script.js"></script>
+  </head>
+
+  <body>
+
+    <h1> Dziennik pogody </h1>
+
+    <form>
+      <input type=text name=username>
+      <input type=password name=username>
+      <button>Login</button>
+    </form>
+
+
+    <form action="" id="weather-form">
+      <input type=text name=place>
+      <input type=text name=date>
+      <input type=text name=temperature>
+      <button type='button' onclick="addWeather()">Dodaj</button>
+    </form>
+
+    <div id="weather-form-response"></div>
+
+    <button type='button' onclick="getWeather()">Pokaz wszystkie</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Miejsce</th>
+          <th>Data</th>
+          <th>Temperatura</th>
+        </tr>
+      </thead>
+      <tbody id="weather-tbody">
+
+      </tbody>
+    
+    </table>
+
+  </body>
+
+</html>

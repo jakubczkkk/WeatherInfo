@@ -2,6 +2,8 @@
 <html>
 
   <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dziennik Pogody</title>
     <script src="script.js"></script>
   </head>
@@ -10,23 +12,28 @@
 
     <h1> Dziennik pogody </h1>
 
-    <form>
-      <input type=text name=username>
-      <input type=password name=username>
-      <button>Login</button>
+    <form id="register-form">
+      <input type="text" name="username">
+      <input type="password" name="password">
+      <input type="password" name="confirmPassword">
     </form>
+    <button onclick="register()">Register</button>
 
+    <form id="login-form">
+      <input type="text" name="username">
+      <input type="password" name="password">
+    </form>
+    <button onclick="login()">Login</button>
 
-    <form action="" id="weather-form">
+    <form id="weather-form">
       <input type=text name=place>
       <input type=text name=date>
       <input type=text name=temperature>
-      <button type='button' onclick="addWeather()">Dodaj</button>
     </form>
-
-    <div id="weather-form-response"></div>
-
-    <button type='button' onclick="getWeather()">Pokaz wszystkie</button>
+    <button onclick="addWeather()">Dodaj</button>
+    
+  </br>
+    <button onclick="getWeather()">Pokaz wszystkie</button>
 
     <table>
       <thead>
@@ -37,6 +44,20 @@
         </tr>
       </thead>
       <tbody id="weather-tbody">
+
+      </tbody>
+    
+    </table>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Miejsce</th>
+          <th>Data</th>
+          <th>Temperatura</th>
+        </tr>
+      </thead>
+      <tbody id="weather-tbody-indexed">
 
       </tbody>
     

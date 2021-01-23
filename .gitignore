@@ -1,3 +1,4 @@
-flask-venv/
 __pycache__/
+.vscode/
 server/node_modules
+server/.env

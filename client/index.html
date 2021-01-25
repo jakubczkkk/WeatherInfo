@@ -12,23 +12,43 @@
 
     <h1> Dziennik pogody </h1>
 
-    <form id="register-form">
-      <input type="text" name="username">
-      <input type="password" name="password">
-      <input type="password" name="confirmPassword">
-    </form>
-    <button onclick="register()">Register</button>
+    <div id="user-not-logged">
 
-    <form id="login-form">
-      <input type="text" name="username">
-      <input type="password" name="password">
-    </form>
-    <button onclick="login()">Login</button>
+      <form id="register-form">
+        <input type="text" name="username">
+        <input type="password" name="password">
+        <input type="password" name="confirmPassword">
+      </form>
+      <button onclick="register()">Register</button>
+
+      <form id="login-form">
+        <input type="text" name="username">
+        <input type="password" name="password">
+      </form>
+      <button onclick="login()">Login</button>
+
+      <div id="form-response"></div>
+
+    </div>
+
+    <div id="user-logged" style="display: none;">
+      <button onclick="logout()">Wyloguj</button>
+      <div>Użytkownik zalogowany</div>
+    </div>
 
     <form id="weather-form">
-      <input type=text name=place>
-      <input type=text name=date>
-      <input type=text name=temperature>
+      <select id="place" name="place" size="5">
+        <option value="Kraków">Kraków</option>
+        <option value="Warszawa">Warszawa</option>
+        <option value="Gdańsk">Gdańsk</option>
+        <option value="Wrocław">Wrocław</option>
+        <option value="Łódź">Łódź</option>
+        <option value="Poznań">Poznań</option>
+        <option value="Katowice">Katowice</option>
+        <option value="Lublin">Lublin</option>
+      </select>
+      <input type="date" name="date">
+      <input type="number" name="temperature">
     </form>
     <button onclick="addWeather()">Dodaj</button>
     
@@ -44,20 +64,6 @@
         </tr>
       </thead>
       <tbody id="weather-tbody">
-
-      </tbody>
-    
-    </table>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Miejsce</th>
-          <th>Data</th>
-          <th>Temperatura</th>
-        </tr>
-      </thead>
-      <tbody id="weather-tbody-indexed">
 
       </tbody>
     

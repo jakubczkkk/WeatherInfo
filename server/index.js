@@ -6,67 +6,134 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv");
 
-dotenv.config();
-
+/*
+  Funkcja generująca token o ważności na czas jednej godziny.
+*/
 function generateAccessToken(username) {
-  return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+  return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '3600s' });
 }
 
-function authorizeUser() {
-  
-}
+dotenv.config();
 
 const app = express();
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
+const DB_URL = process.env.DATABASE_URL;
 
-const db_url = 'mongodb+srv://user:user@cluster.9vk28.mongodb.net/db_weather?retryWrites=true&w=majority';
-
-app.listen(PORT, () => console.log(`App running on http://localhost:${PORT}`));
+app.listen(PORT);
 
 app.get('/weather/', (req, res) => {
 
-  mongodb.MongoClient.connect(db_url, { useUnifiedTopology: true }, (err, client) => {
+  jwt.verify(req.headers.authorization, process.env.TOKEN_SECRET, (err, decode) => {
 
-    if (err) return console.log(err)
+    /*
+      Sprawdzamy poprawność tokena.
+    */
+    if (err) {
+      res.status(404).send({message: 'Błąd autoryzacji.'});
+      return;
+    }
+
+    mongodb.MongoClient.connect(DB_URL, { useUnifiedTopology: true }, (err, client) => {
+
+      if (err) {
+        res.status(404).send({message: 'Błąd połączenia z MongoDB.'});
+        return;
+      }
 
       const db = client.db('db_weather');
       db.collection('weather').find().toArray((err, result) => {
         if (err) return console.log(err);
         res.send(JSON.stringify(result));
       });
-
+  
+    });
   });
 
 });
 
 app.post('/weather/', (req, res) => {
 
-  mongodb.MongoClient.connect(db_url, { useUnifiedTopology: true }, (err, client) => {
+  jwt.verify(req.headers.authorization, process.env.TOKEN_SECRET, (err, decode) => {
 
-    if (err) return console.log(err);
+    /*
+      Sprawdzamy poprawność tokena.
+    */
+    if (err) {
+      res.status(404).send({message: 'Błąd autoryzacji.'});
+      return;
+    }
 
+    mongodb.MongoClient.connect(DB_URL, { useUnifiedTopology: true }, (err, client) => {
+
+      if (err) {
+        res.status(404).send({message: 'Błąd połączenia z MongoDB.'});
+        return;
+      }
+      
       const db = client.db('db_weather');
       db.collection('weather').insertMany(req.body).catch(err => console.log(err));
-      res.status(200).send();
+      res.status(200).send({message: "Dodano do bazy danych!"});
 
+    });
   });
 
 });
 
+app.delete('/weather/:id', (req, res) => {
+
+  jwt.verify(req.headers.authorization, process.env.TOKEN_SECRET, (err, decode) => {
+
+    /*
+      Sprawdzamy poprawność tokena.
+    */
+    if (err) {
+      res.status(404).send({message: 'Błąd autoryzacji.'});
+      return;
+    }
+
+    mongodb.MongoClient.connect(DB_URL, { useUnifiedTopology: true }, (err, client) => {
+
+      if (err) {
+        res.status(404).send({message: 'Błąd połączenia z MongoDB.'});
+        return;
+      }
+
+      const db = client.db('db_weather');
+      const [place, date] = req.params.id.split('_');
+      db.collection('weather').deleteMany({place: place, date: date})
+      .then(res.status(200).send({message: "Usunięto z bazy danych!"}))
+      .catch(err => res.status(400).send({message: "Błąd podczas usuwania"}));
+    });
+  }); 
+
+})
+
 app.post('/register/', (req, res) => {
 
-  mongodb.MongoClient.connect(db_url, { useUnifiedTopology: true }, async (err, client) => {
+  mongodb.MongoClient.connect(DB_URL, { useUnifiedTopology: true }, async (err, client) => {
 
-    if (err) return console.log(err)
+    if (err) {
+      res.status(404).send({message: 'Błąd połączenia z MongoDB.'});
+      return;
+    }
+
     const db = client.db('db_users');
     db.collection('users').findOne({username: req.body.username})
     .then(async user => {
+
+      /*
+        Sprawdzamy czy już istnieje użytkownik o tej nazwie.
+      */
       if (user == null) {
+
+        /*
+          Hashujemy hasło.
+        */
         try {
           const hashedPassword = await bcrypt.hash(req.body.password, 10);
           const user = {
@@ -74,14 +141,22 @@ app.post('/register/', (req, res) => {
             password: hashedPassword
           };
           db.collection('users').insertOne(user, (err, result) => {
-            if (err) return console.log(err);
-            res.status(200).send({message: "Poprawnie zarejestrowano użytkownika"});
+            if (err) {
+              res.status(404).send({message: 'Błąd połączenia rejestracji.'});
+              return;
+            }
+            res.status(200).send({
+              message: "Poprawnie zarejestrowano użytkownika"
+            });
           });
         } catch (error) {
-          res.status(500).send(error);
+          res.status(500).send({message: error});
         }
+
       } else {
-        res.status(400).send({message: "Użytkownik o podanej nazwie jest już w zarejestrowany w bazie"});
+        res.status(400).send({
+          message: "Użytkownik o podanej nazwie jest już w zarejestrowany w bazie"
+        });
       }
     });
 
@@ -90,29 +165,46 @@ app.post('/register/', (req, res) => {
 
 app.post('/login/', (req, res) => {
 
-  mongodb.MongoClient.connect(db_url, { useUnifiedTopology: true }, (err, client) => {
+  mongodb.MongoClient.connect(DB_URL, { 
+    useUnifiedTopology: true 
+  }, (err, client) => {
 
-    if (err) return console.log(err);
+    if (err) {
+      res.status(404).send({message: 'Błąd połączenia z MongoDB.'});
+      return;
+    }
+
     const db = client.db('db_users');
     db.collection('users').findOne({username: req.body.username})
-      .then(async user => {
-        if (user == null) {
-          return res.status(400).send({message: 'No such user'});
+    .then(async user => {
+
+      /*
+        Sprawdzamy czy podana nazwa użytkownika istnieje.
+      */
+      if (user == null) {
+        res.status(400).send({message: 'No such user'});
+        return;
+      }
+      try {
+        /*
+          Porównujemy podane hasło z tym w bazie.
+        */
+        if (await bcrypt.compare(req.body.password, user.password)) {
+          const token = generateAccessToken({ username: req.body.username} );
+          res.status(200).send(JSON.stringify({
+            message: "Zalogowano użytkownika", 
+            token: token
+          }));
+        } else {
+          res.status(400).send({message: 'Zły login lub hasło.'});
         }
-        try {
-          if (await bcrypt.compare(req.body.password, user.password)) {
-            const token = generateAccessToken({ username: req.body.username} );
-            res.status(200).send(JSON.stringify({token: token}));
-          } else {
-            res.status(400).send({message: 'Zły login lub hasło.'});
-          }
-        } catch {
-          res.status(500).send();
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
+      } catch {
+        res.status(500).send({message: "Błąd"});
+      }
+    })
+    .catch(err => {
+      res.status(500).send({message: "Błąd"});
+    });
 
   });
 

@@ -1,7 +1,7 @@
 __pycache__/
 .vscode/
 .gitignore
-server/node_modules
-server/.env
-server/package.json
-server/package-lock.json
+node_modules
+.env
+package.json
+package-lock.json

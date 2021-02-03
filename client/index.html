@@ -5,70 +5,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dziennik Pogody</title>
+    <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
 
   <body>
 
-    <h1> Dziennik pogody </h1>
+    <div id="main">
+      <header> Dziennik Pogody </header>
 
-    <div id="user-not-logged">
+      <nav>
+        <button id="login-button" onclick="get('login')">Logowanie</button>
+        <button id="register-button" onclick="get('register')">Rejestracja</button>
+        <button id="logout-button" onclick="get('logout')">Wyloguj</button>
+        <button id="add-button" onclick="get('add')">Dodaj dane</button>
+        <button id="get-button" onclick="get('get')">Wyświetl dane</button>
+        <button id="delete-button" onclick="get('delete')">Usuń dane</button>
+      </nav>
 
-      <form id="register-form">
-        <input type="text" name="username">
-        <input type="password" name="password">
-        <input type="password" name="confirmPassword">
-      </form>
-      <button onclick="register()">Register</button>
+      <div id="message"></div>
 
-      <form id="login-form">
-        <input type="text" name="username">
-        <input type="password" name="password">
-      </form>
-      <button onclick="login()">Login</button>
+      <main>
 
-      <div id="form-response"></div>
+        <div class="content" id="login-content">
+          <form id="login-form">
+            Nazwa użytkownika: <input type="text" name="username"><br>
+            Hasło: <input type="password" name="password"><br>
+          </form>
+          <button onclick="login()">Zaloguj</button>
+        </div>
 
+        <div class="content" id="register-content">
+          <form id="register-form">
+            Nazwa użytkownika: <input type="text" name="username"><br>
+            Hasło: <input type="password" name="password"><br>
+            Potwierdź hasło: <input type="password" name="confirmPassword"><br>
+          </form>
+          <button onclick="register()">Zarejestruj</button>
+        </div>
+
+        <div class="content" id="logout-content">
+          <p>Potwierdź wylogowanie:</p>
+          <button onclick="logout()">Wyloguj</button>
+        </div>
+
+        <div class="content" id="add-content">
+          <form id="weather-form">
+            Wybierz miasto: <select id="place" name="place" size="1">
+              <option value="Kraków">Kraków</option>
+              <option value="Warszawa">Warszawa</option>
+              <option value="Gdańsk">Gdańsk</option>
+              <option value="Wrocław">Wrocław</option>
+              <option value="Łódź">Łódź</option>
+              <option value="Poznań">Poznań</option>
+              <option value="Katowice">Katowice</option>
+              <option value="Lublin">Lublin</option>
+            </select><br>
+            Wybierz datę: <input type="date" name="date"><br>
+            Wybierz temperaturę: <input type="number" name="temperature"><br>
+          </form>
+          <button onclick="addWeather()">Dodaj</button>
+
+        </div>
+
+        <div class="content" id="get-content">
+          <button onclick="getWeather()">Pokaż wszystkie</button>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Miejsce</th>
+                <th>Data</th>
+                <th>Temperatura</th>
+              </tr>
+            </thead>
+            <tbody id="weather-tbody">
+
+            </tbody>
+          
+          </table>
+        </div>
+
+        <div class="content" id="delete-content">
+          <p>Wybierz miejsce i datę dla którego zostaną usunięte dane: </p>
+          <form id="delete-weather-form">
+            <select id="place" name="place" size="1">
+              <option value="Kraków">Kraków</option>
+              <option value="Warszawa">Warszawa</option>
+              <option value="Gdańsk">Gdańsk</option>
+              <option value="Wrocław">Wrocław</option>
+              <option value="Łódź">Łódź</option>
+              <option value="Poznań">Poznań</option>
+              <option value="Katowice">Katowice</option>
+              <option value="Lublin">Lublin</option>
+            </select><br>
+            <input type="date" name="date"><br>
+          </form>
+          <button onclick="deleteWeather()">Usuń</button>
+
+        </div>
+
+      </main>
     </div>
-
-    <div id="user-logged" style="display: none;">
-      <button onclick="logout()">Wyloguj</button>
-      <div>Użytkownik zalogowany</div>
-    </div>
-
-    <form id="weather-form">
-      <select id="place" name="place" size="5">
-        <option value="Kraków">Kraków</option>
-        <option value="Warszawa">Warszawa</option>
-        <option value="Gdańsk">Gdańsk</option>
-        <option value="Wrocław">Wrocław</option>
-        <option value="Łódź">Łódź</option>
-        <option value="Poznań">Poznań</option>
-        <option value="Katowice">Katowice</option>
-        <option value="Lublin">Lublin</option>
-      </select>
-      <input type="date" name="date">
-      <input type="number" name="temperature">
-    </form>
-    <button onclick="addWeather()">Dodaj</button>
-    
-  </br>
-    <button onclick="getWeather()">Pokaz wszystkie</button>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Miejsce</th>
-          <th>Data</th>
-          <th>Temperatura</th>
-        </tr>
-      </thead>
-      <tbody id="weather-tbody">
-
-      </tbody>
-    
-    </table>
-
   </body>
 
 </html>

@@ -55,7 +55,7 @@ let isUserLoggedIn;
 /*
   Zmienna przechowuje adres do serwera.
 */
-const URL = "http://localhost:5000/";
+const URL = "https://weather-info-backend.herokuapp.com/";
 
 /*
   Otwieramy połączenie z IndexedDB
